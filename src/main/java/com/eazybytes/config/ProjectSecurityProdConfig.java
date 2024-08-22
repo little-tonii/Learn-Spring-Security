@@ -16,8 +16,8 @@ import com.eazybytes.exceptionhandling.CustomBasicAuthenticationEntryPoint;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
-@Profile("!prod")
-public class ProjectSecurityConfig {
+@Profile("prod")
+public class ProjectSecurityProdConfig {
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -25,12 +25,8 @@ public class ProjectSecurityConfig {
          * http.authorizeHttpRequests((requests) -> requests.anyRequest().permitAll());
          */
         /* http.authorizeHttpRequests((requests) -> requests.anyRequest().denyAll()); */
-        http.sessionManagement(
-                smc -> smc.invalidSessionUrl("/invalidSession")
-                        .maximumSessions(3)
-                        .maxSessionsPreventsLogin(true))
-                .requiresChannel(rcc -> rcc.anyRequest()
-                        .requiresInsecure())
+        http.sessionManagement(smc -> smc.invalidSessionUrl("/invalidSession"))
+                .requiresChannel(rcc -> rcc.anyRequest().requiresSecure())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/myAccount", "/myBalance", "/myLoans", "/myCards")
